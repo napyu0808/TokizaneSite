@@ -12,12 +12,38 @@
        none 자리를 url(...) 로만 바꾸면 됩니다.
          --main-illust: url('illust.jpg');
        영상·뷰별 내용은 파일 맨 아래 <script> 안 CONFIG 에서 설정합니다.
+
+       ── 必要な画像 ─────────────────────────────
+
+       ① メインイラスト  →  --main-illust
+          最初の画面いっぱいに敷く背景。
+          1920×1080 以上 / 横長 16:9 / jpg・webp
+          立ち絵は 中央〜右寄り に。画面左の 1/3 はハーフトーンの
+          ドットと名前板が重なるので、顔や見せたい部分は置かない。
+          画面比率で左右が切れるので、端に大事なものを置かない。
+
+       ② ボタン画像 ×3  →  --btn-1-image / -2- / -3-
+          右下の B1・B2・B3 の背景。
+          720×120 程度 / 横長の帯 6:1 / png・webp
+          上に文字がのるので 模様は控えめ に。
+          平行四辺形に切り抜かれるため、左右の端は余白を多めに。
+
+       ③ プロフィール画面の背景  →  CONFIG.b1.src（下の script 内）
+          B1 を押したときに全画面で出る絵。
+          1920×1080 以上 / 横長 / jpg・webp
+
+       ④ リンク画面の背景  →  CONFIG.b3.src（下の script 内）
+          B3 を押したときに全画面で出る絵。
+          1920×1080 以上 / 横長 / jpg・webp
+
+       ※ 動画のサムネイル3枚は YouTube から自動で取ってくるので不要。
+       ※ 画像は index.html と同じフォルダに置き、ファイル名だけ書く。
        ══════════════════════════════════════════════ */
-    --main-illust: url('illust.webp');   /* 첫 화면 메인 일러스트 */
+    --main-illust: none;        /* ① 첫 화면 메인 일러스트 */
     --illust-pos: center;       /* 잘리는 위치. 'center 30%', 'right center' 등 */
-    --btn-1-image: none;        /* B1 버튼 이미지 */
-    --btn-2-image: none;        /* B2 버튼 이미지 */
-    --btn-3-image: none;        /* B3 버튼 이미지 */
+    --btn-1-image: none;        /* ② B1 버튼 이미지 */
+    --btn-2-image: none;        /* ② B2 버튼 이미지 */
+    --btn-3-image: none;        /* ② B3 버튼 이미지 */
 
     --illust-scrim: 0.3;        /* 메인 일러스트 위 어둠. 0 = 원본 그대로 */
     --btn-scrim: 0.45;          /* 버튼 이미지 위 어둠 */
@@ -141,9 +167,10 @@
     font-size: 0.74rem;
     line-height: 1.9;
     color: var(--dim);
-    max-width: 42ch;
+    max-width: 46ch;
     margin: 0;
   }
+  .slate-hint code { color: var(--magenta); }
   .slate-link {
     display: inline-block;
     margin-top: 1rem;
@@ -438,6 +465,66 @@
     margin: 0;
   }
 
+  /* ── 作業メモ: 必要な画像の一覧 ──────────────
+     画像がそろったら、この .needs のCSSと
+     HTML の <aside class="needs"> ごと消してください。
+     ──────────────────────────────────────── */
+  .needs {
+    position: absolute;
+    z-index: 5;
+    right: clamp(16px, 4vw, 56px);
+    top: clamp(16px, 5vh, 48px);
+    width: min(400px, calc(100% - 32px));
+    max-height: 58vh;
+    overflow-y: auto;
+    padding: 1rem 1.15rem 1.1rem;
+    border: 1px dashed rgba(255, 255, 255, 0.38);
+    background: rgba(0, 0, 0, 0.74);
+    font-family: var(--f-mono);
+    font-size: 0.7rem;
+    line-height: 1.7;
+    color: #cdc9e2;
+    transition: opacity 0.4s ease, visibility 0.4s;
+  }
+  body:not([data-view="home"]) .needs { opacity: 0; visibility: hidden; }
+
+  .needs h2 {
+    margin: 0 0 0.7rem;
+    font-family: var(--f-latin);
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--cyan);
+  }
+  .needs ol {
+    margin: 0;
+    padding-left: 1.3em;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .needs b {
+    display: block;
+    color: #fff;
+    font-weight: 700;
+  }
+  .needs code {
+    color: var(--magenta);
+    font-size: 0.95em;
+  }
+  .needs .done { color: var(--dim); }
+  .needs footer {
+    margin-top: 0.9rem;
+    padding-top: 0.7rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    color: var(--dim);
+    font-size: 0.66rem;
+  }
+
+  /* 画面が狭いときは邪魔になるので隠す（作業メモなので問題なし） */
+  @media (max-width: 860px) {
+    .needs { display: none; }
+  }
+
   /* ── 3. 右下の斜めボタン ─────────────────── */
   .dock {
     position: absolute;
@@ -607,6 +694,40 @@
     <p class="romaji" id="nameRomaji">TOKIZANE SOUMU</p>
   </div>
 
+  <!-- 作業メモ。画像がそろったら、この <aside> と CSS の .needs を消す -->
+  <aside class="needs">
+    <h2>必要な画像</h2>
+    <ol>
+      <li>
+        <b>① メインイラスト</b>
+        最初の画面の背景。1920×1080 以上 / 横長 16:9 / jpg・webp<br>
+        立ち絵は<strong>中央〜右寄り</strong>に。左 1/3 はドットと名前板が重なる。<br>
+        <code>--main-illust</code>
+      </li>
+      <li>
+        <b>② ボタン画像 ×3</b>
+        右下 B1・B2・B3 の背景。720×120 程度 / 帯 6:1 / png・webp<br>
+        文字がのるので模様は控えめに。平行四辺形に切られるので端は余白を。<br>
+        <code>--btn-1-image</code> <code>--btn-2-image</code> <code>--btn-3-image</code>
+      </li>
+      <li>
+        <b>③ プロフィール画面の背景</b>
+        B1 を押すと全画面で出る絵。1920×1080 以上 / 横長<br>
+        <code>CONFIG.b1.src</code>
+      </li>
+      <li>
+        <b>④ リンク画面の背景</b>
+        B3 を押すと全画面で出る絵。1920×1080 以上 / 横長<br>
+        <code>CONFIG.b3.src</code>
+      </li>
+      <li class="done">
+        <b>⑤ 動画サムネイル ×3 — 不要</b>
+        YouTube から自動で取得します。
+      </li>
+    </ol>
+    <footer>画像は index.html と同じフォルダに置き、ファイル名だけ書きます。</footer>
+  </aside>
+
   <button class="back" type="button" id="backBtn">
     <span aria-hidden="true">&lsaquo;</span> HOME
   </button>
@@ -647,9 +768,9 @@
    src 가 비어 있으면 자리 표시가 나옵니다.
    ══════════════════════════════════════════════════════════ */
 var CONFIG = {
-  b1: { title: 'プロフィール', type: 'image',  src: '' },
+  b1: { title: 'プロフィール', type: 'image',  src: '' },   /* ③ 画像待ち */
   b2: { title: 'ムービー',     type: 'movies' },
-  b3: { title: 'リンク',       type: 'image',  src: '' }
+  b3: { title: 'リンク',       type: 'image',  src: '' }    /* ④ 画像待ち */
 };
 
 /* ══════════════════════════════════════════════════════════
@@ -958,8 +1079,10 @@ var MOVIE = {
 
     if (c.type === 'image') {
       if (!c.src) {
-        viewLayer.innerHTML = slate('IMAGE', c.title,
-          'CONFIG.' + key + '.src 에 이미지 경로를 넣으면 여기에 전체 화면으로 깔립니다.');
+        viewLayer.innerHTML = slate('画像がまだです', c.title,
+          '全画面の背景画像が入ります。1920×1080 以上 / 横長 16:9 / jpg・webp。<br>' +
+          'index.html と同じフォルダに置いて、<code>CONFIG.' + key +
+          '.src</code> にファイル名を書いてください。');
         return;
       }
       var d = document.createElement('div');
@@ -969,8 +1092,9 @@ var MOVIE = {
 
     } else if (c.type === 'video') {
       if (!c.src) {
-        viewLayer.innerHTML = slate('VIDEO', c.title,
-          'CONFIG.' + key + '.src 에 mp4 경로를 넣으면 배경에서 재생됩니다.');
+        viewLayer.innerHTML = slate('動画がまだです', c.title,
+          '全画面で流す動画が入ります。mp4 / webm、1920×1080 推奨。<br>' +
+          '<code>CONFIG.' + key + '.src</code> にファイル名を書いてください。');
         return;
       }
       var vid = document.createElement('video');
