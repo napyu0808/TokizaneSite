@@ -1,0 +1,361 @@
+<title>サイバーパンク日本語書体</title>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&family=Dela+Gothic+One&family=DotGothic16&family=M+PLUS+1+Code:wght@400;700&family=Monomaniac+One&family=Noto+Sans+JP:wght@400;700;900&family=Rampart+One&family=Reggae+One&family=Shippori+Mincho+B1:wght@800&family=Stick&family=Train+One&family=Zen+Dots&display=swap">
+
+<style>
+  /* レイアウト: 一列の見本。各書体は見出し・一行・英数字の三段で並ぶ */
+  :root {
+    --bg: #08070f;
+    --fg: #ebe9f7;
+    --dim: #8e89ab;
+    --faint: #5b567a;
+    --line: #221e38;
+    --cyan: #3ceaff;
+    --magenta: #ff3d8e;
+    color-scheme: dark;
+
+    --f-body: 'Noto Sans JP', system-ui, sans-serif;
+    --f-mono: 'M PLUS 1 Code', ui-monospace, monospace;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--f-body);
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: 3rem 5rem;
+  }
+
+  /* --- ページ頭 --- */
+  .intro { max-width: 36rem; }
+
+  .kicker {
+    font-family: var(--f-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin: 0 0 1rem;
+  }
+
+  h1 {
+    font-family: 'Monomaniac One', var(--f-body);
+    font-size: clamp(2.2rem, 7vw, 3.4rem);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: 0.02em;
+    text-wrap: balance;
+    margin: 0 0 1rem;
+  }
+
+  .intro p {
+    color: var(--dim);
+    margin: 0;
+  }
+
+  /* --- 見本 --- */
+  .specimens {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 3.5rem;
+  }
+
+  .sp {
+    border-top: 1px solid var(--line);
+    padding-block: 2.25rem;
+    min-width: 0;
+  }
+
+  .sp-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .sp-name {
+    font-family: var(--f-mono);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    color: var(--fg);
+  }
+
+  .sp-use {
+    font-size: 0.78rem;
+    color: var(--faint);
+  }
+
+  .sp-tag {
+    font-family: var(--f-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--magenta);
+    margin-left: auto;
+  }
+
+  /* 三段の見本本体 */
+  .big {
+    font-size: clamp(2rem, 8vw, 4rem);
+    line-height: 1.2;
+    margin: 0 0 0.6rem;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+
+  .mid {
+    font-size: clamp(1.05rem, 3.2vw, 1.4rem);
+    line-height: 1.6;
+    margin: 0 0 0.6rem;
+    color: #d6d3e8;
+    overflow-wrap: anywhere;
+  }
+
+  .lat {
+    font-size: clamp(0.95rem, 2.6vw, 1.15rem);
+    letter-spacing: 0.06em;
+    color: var(--dim);
+    margin: 0 0 1rem;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+  }
+
+  .css {
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    color: var(--faint);
+    margin: 0;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  /* 各書体の割り当て */
+  .dela   { font-family: 'Dela Gothic One', var(--f-body); }
+  .mono1  { font-family: 'Monomaniac One', var(--f-body); }
+  .train  { font-family: 'Train One', var(--f-body); }
+  .dot    { font-family: 'DotGothic16', var(--f-body); }
+  .ram    { font-family: 'Rampart One', var(--f-body); }
+  .stick  { font-family: 'Stick', var(--f-body); }
+  .reggae { font-family: 'Reggae One', var(--f-body); }
+  .minch  { font-family: 'Shippori Mincho B1', 'Noto Serif JP', serif; font-weight: 800; }
+  .mpc    { font-family: 'M PLUS 1 Code', ui-monospace, monospace; }
+  .noto9  { font-family: 'Noto Sans JP', sans-serif; font-weight: 900; }
+  .notor  { font-family: 'Noto Sans JP', sans-serif; font-weight: 400; }
+  .chakra { font-family: 'Chakra Petch', var(--f-body); font-weight: 700; }
+  .zdots  { font-family: 'Zen Dots', var(--f-body); }
+
+  /* --- ページ尾 --- */
+  .note {
+    border-top: 1px solid var(--line);
+    margin-top: 1rem;
+    padding-top: 2rem;
+    max-width: 40rem;
+    color: var(--dim);
+    font-size: 0.86rem;
+  }
+
+  .note h2 {
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    font-weight: 700;
+    margin: 0 0 0.75rem;
+  }
+
+  .note p { margin: 0 0 0.8rem; }
+  .note code {
+    font-family: var(--f-mono);
+    font-size: 0.82em;
+    color: #c9c5e0;
+  }
+</style>
+
+<div class="wrap">
+
+  <div class="intro">
+    <p class="kicker">Specimen / Cyberpunk JP</p>
+    <h1>サイバーパンク<br>日本語書体</h1>
+    <p>Google Fonts から読み込める 13 書体。見出し用の大きさ、一行の文章、英数字の三段で並べています。</p>
+  </div>
+
+  <div class="specimens">
+
+    <section class="sp">
+      <div class="sp-head">
+        <span class="sp-name">Dela Gothic One</span>
+        <span class="sp-use">ロゴ・ヒーロー見出し</span>
+        <span class="sp-tag">display</span>
+      </div>
+      <p class="big dela">電脳都市の夜明け</p>
+      <p class="mid dela">ネオンが滲む路地、午前三時。</p>
+      <p class="lat dela">NEON TOKYO 2099</p>
+      <p class="css">font-family: 'Dela Gothic One', sans-serif;</p>
+    </section>
+
+    <section class="sp">
+      <div class="sp-head">
+        <span class="sp-name">Monomaniac One</span>
+        <span class="sp-use">縦長の見出し・看板</span>
+        <span class="sp-tag">display</span>
+      </div>
+      <p class="big mono1">電脳都市の夜明け</p>
+      <p class="mid mono1">ネオンが滲む路地、午前三時。</p>
+      <p class="lat mono1">NEON TOKYO 2099</p>
+      <p class="css">font-family: 'Monomaniac One', sans-serif;</p>
+    </section>
+
+    <section class="sp">
+      <div class="sp-head">
+        <span class="sp-name">Train One</span>
+        <span class="sp-use">二重線・回路の質感</span>
+        <span class="sp-tag">decorative</span>
+      </div>
+      <p class="big train">電脳都市の夜明け</p>
+      <p class="mid train">ネオンが滲む路地、午前三時。</p>
+      <p class="lat train">NEON TOKYO 2099</p>
+      <p class="css">font-family: 'Train One', sans-serif;</p>
+    </section>
+
+    <section class="sp">
+      <div class="sp-head">
+        <span class="sp-name">DotGothic16</span>
+        <span class="sp-use">ドット・レトロ端末</span>
+        <span class="sp-tag">bitmap</span>
+      </div>
+      <p class="big dot">電脳都市の夜明け</p>
+      <p class="mid dot">ネオンが滲む路地、午前三時。</p>
+      <p class="lat dot">NEON TOKYO 2099</p>
+      <p class="css">font-family: 'DotGothic16', monospace;</p>
+    </section>
+
+    <section class="sp">
+      <div class="sp-head">
+        <span class="sp-name">Rampart One</span>
+        <span class="sp-use">立体ロゴ・ステッカー</span>
+        <span class="sp-tag">display</span>
+      </div>
+      <p class="big ram">電脳都市の夜明け</p>
+      <p class="mid ram">ネオンが滲む路地、午前三時。</p>
+      <p class="lat ram">NEON TOKYO 2099</p>
+      <p class="css">font-family: 'Rampart One', sans-serif;</p>
+    </section>
+
+    <section class="sp">
+      <div class="sp-head">
+        <span class="sp-name">Stick</span>
+        <span class="sp-use">細いラベル・縦書きメニュー</span>
+        <span class="sp-tag">stencil</span>
+      </div>
+      <p class="big stick">電脳都市の夜明け</p>
+      <p class="mid stick">ネオンが滲む路地、午前三時。</p>
+      <p class="lat stick">NEON TOKYO 2099</p>
+      <p class="css">font-family: 'Stick', sans-serif;</p>
+    </section>
+
+    <section class="sp">
+      <div class="sp-head">
+        <span class="sp-name">Reggae One</span>
+        <span class="sp-use">重いデコ見出し</span>
+        <span class="sp-tag">display</span>
+      </div>
+      <p class="big reggae">電脳都市の夜明け</p>
+      <p class="mid reggae">ネオンが滲む路地、午前三時。</p>
+      <p class="lat reggae">NEON TOKYO 2099</p>
+      <p class="css">font-family: 'Reggae One', sans-serif;</p>
+    </section>
+
+    <section class="sp">
+      <div class="sp-head">
+        <span class="sp-name">Shippori Mincho B1 · 800</span>
+        <span class="sp-use">明朝の対比・和の看板</span>
+        <span class="sp-tag">serif</span>
+      </div>
+      <p class="big minch">電脳都市の夜明け</p>
+      <p class="mid minch">ネオンが滲む路地、午前三時。</p>
+      <p class="lat minch">NEON TOKYO 2099</p>
+      <p class="css">font-family: 'Shippori Mincho B1', serif; font-weight: 800;</p>
+    </section>
+
+    <section class="sp">
+      <div class="sp-head">
+        <span class="sp-name">M PLUS 1 Code</span>
+        <span class="sp-use">スペック表・ターミナル UI</span>
+        <span class="sp-tag">mono · 日本語対応</span>
+      </div>
+      <p class="big mpc">電脳都市の夜明け</p>
+      <p class="mid mpc">ネオンが滲む路地、午前三時。</p>
+      <p class="lat mpc">NEON TOKYO 2099</p>
+      <p class="css">font-family: 'M PLUS 1 Code', monospace;</p>
+    </section>
+
+    <section class="sp">
+      <div class="sp-head">
+        <span class="sp-name">Noto Sans JP · 900</span>
+        <span class="sp-use">無難な太見出し</span>
+        <span class="sp-tag">gothic</span>
+      </div>
+      <p class="big noto9">電脳都市の夜明け</p>
+      <p class="mid noto9">ネオンが滲む路地、午前三時。</p>
+      <p class="lat noto9">NEON TOKYO 2099</p>
+      <p class="css">font-family: 'Noto Sans JP', sans-serif; font-weight: 900;</p>
+    </section>
+
+    <section class="sp">
+      <div class="sp-head">
+        <span class="sp-name">Noto Sans JP · 400</span>
+        <span class="sp-use">本文</span>
+        <span class="sp-tag">body</span>
+      </div>
+      <p class="big notor">電脳都市の夜明け</p>
+      <p class="mid notor">ネオンが滲む路地、午前三時。長めの本文もここで確認できます。改行の落ち着きと字面の素直さが本文向きです。</p>
+      <p class="lat notor">NEON TOKYO 2099</p>
+      <p class="css">font-family: 'Noto Sans JP', sans-serif;</p>
+    </section>
+
+    <section class="sp">
+      <div class="sp-head">
+        <span class="sp-name">Chakra Petch · 700</span>
+        <span class="sp-use">英数字アクセント</span>
+        <span class="sp-tag">latin only</span>
+      </div>
+      <p class="big chakra">電脳都市の夜明け</p>
+      <p class="mid chakra">日本語は Noto Sans JP に自動で落ちます。</p>
+      <p class="lat chakra">NEON TOKYO 2099</p>
+      <p class="css">font-family: 'Chakra Petch', 'Noto Sans JP', sans-serif;</p>
+    </section>
+
+    <section class="sp">
+      <div class="sp-head">
+        <span class="sp-name">Zen Dots</span>
+        <span class="sp-use">英数字ロゴ・タグ</span>
+        <span class="sp-tag">latin only</span>
+      </div>
+      <p class="big zdots">電脳都市の夜明け</p>
+      <p class="mid zdots">日本語は Noto Sans JP に自動で落ちます。</p>
+      <p class="lat zdots">NEON TOKYO 2099</p>
+      <p class="css">font-family: 'Zen Dots', 'Noto Sans JP', sans-serif;</p>
+    </section>
+
+  </div>
+
+  <div class="note">
+    <h2>latin only の二書体について</h2>
+    <p>Chakra Petch と Zen Dots は日本語グリフを持ちません。上の見本で見出しだけ字形が違うのは、日本語部分がスタックの次の <code>'Noto Sans JP'</code> に落ちているからです。英数字や数字だけをテック寄りにしたいときは、この並びをそのまま使えば日本語は自動で元の書体のまま残ります。</p>
+    <h2>読み込みについて</h2>
+    <p>日本語書体は原本が数 MB ありますが、Google Fonts は <code>unicode-range</code> で分割配信するので、実際に使う文字の塊だけが落ちてきます。セルフホストする場合はサブセット化が必須です。</p>
+  </div>
+
+</div>

@@ -1,0 +1,1018 @@
+<meta charset="utf-8">
+<title>時實ソウム OFFICIAL</title>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Dela+Gothic+One&family=M+PLUS+1+Code:wght@400;500;700&family=Noto+Sans+JP:wght@400;700&display=swap">
+
+<style>
+  /* レイアウト: 全画面の一枚絵。左にハーフトーンと名前板、右下に斜めのボタン三枚 */
+
+  :root {
+    /* ══════════════════════════════════════════════
+       差し替え設定 / 교체 설정
+       none 자리를 url(...) 로만 바꾸면 됩니다.
+         --main-illust: url('illust.jpg');
+       영상·뷰별 내용은 파일 맨 아래 <script> 안 CONFIG 에서 설정합니다.
+       ══════════════════════════════════════════════ */
+    --main-illust: url('illust.webp');   /* 첫 화면 메인 일러스트 */
+    --illust-pos: center;       /* 잘리는 위치. 'center 30%', 'right center' 등 */
+    --btn-1-image: none;        /* B1 버튼 이미지 */
+    --btn-2-image: none;        /* B2 버튼 이미지 */
+    --btn-3-image: none;        /* B3 버튼 이미지 */
+
+    --illust-scrim: 0.3;        /* 메인 일러스트 위 어둠. 0 = 원본 그대로 */
+    --btn-scrim: 0.45;          /* 버튼 이미지 위 어둠 */
+
+    /* ハーフトーン */
+    --dot: #000000;             /* 도트 색 */
+    --halftone-opacity: 0.92;   /* 도트 진하기 */
+    --halftone-reach: 1;        /* 도트가 오른쪽으로 뻗는 정도. 0.6 = 짧게, 1.4 = 길게 */
+
+    /* ボタン */
+    --dock-lift: clamp(24px, 12vh, 130px);  /* 버튼을 바닥에서 띄우는 높이 */
+    --dock-tilt: -6deg;                     /* 버튼 묶음 전체 기울기 */
+    --btn-skew: -14deg;                     /* 버튼 하나의 평행사변형 기울기 */
+
+    /* 色 */
+    --bg: #000000;
+    --fg: #ffffff;
+    --dim: #9a94b4;
+    --cyan: #3ceaff;
+    --magenta: #ff3d8e;
+    --line: rgba(255, 255, 255, 0.5);
+    color-scheme: dark;
+
+    /* 書体 */
+    --f-display: 'Dela Gothic One', 'Noto Sans JP', sans-serif;
+    --f-body: 'Noto Sans JP', system-ui, sans-serif;
+    --f-mono: 'M PLUS 1 Code', ui-monospace, monospace;
+    --f-latin: 'Chakra Petch', 'Noto Sans JP', sans-serif;
+  }
+
+  html, body { height: 100%; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--f-body);
+    overflow: hidden;
+  }
+
+  .stage {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* ── 1. 背景レイヤー ─────────────────────── */
+  .layer {
+    position: absolute;
+    inset: 0;
+    background-color: var(--bg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  /* 最初の画面 — メインイラスト */
+  .layer--home {
+    z-index: 1;
+    background-image:
+      linear-gradient(rgba(0,0,0,var(--illust-scrim)), rgba(0,0,0,var(--illust-scrim))),
+      var(--main-illust),
+      /* イラスト未設定のときの仮の下地 — 左を明るくしてハーフトーンが見えるように */
+      linear-gradient(100deg, #6f6894 0%, #413a63 24%, #221c3a 48%, #0c0a16 74%, #050408 100%);
+    background-position: var(--illust-pos);
+    transition: opacity 0.5s ease;
+  }
+
+  /* ボタンで切り替わる中身 */
+  .layer--view {
+    z-index: 2;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.45s ease, visibility 0.45s;
+  }
+  body[data-view]:not([data-view="home"]) .layer--view {
+    opacity: 1;
+    visibility: visible;
+  }
+  body[data-view]:not([data-view="home"]) .layer--home { opacity: 0.12; }
+
+  .layer--view > video,
+  .layer--view > iframe,
+  .layer--view > .media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    object-fit: cover;
+    background-size: cover;
+    background-position: center;
+  }
+
+  /* 中身が未設定のときの仮表示 */
+  .slate {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 0.6rem;
+    text-align: center;
+    padding: 24px;
+    background:
+      repeating-linear-gradient(135deg, #0e0c1a 0 14px, #121020 14px 28px);
+  }
+  .slate-kind {
+    font-family: var(--f-latin);
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    color: var(--cyan);
+  }
+  .slate-title {
+    font-family: var(--f-display);
+    font-size: clamp(1.5rem, 5vw, 2.4rem);
+    margin: 0;
+  }
+  .slate-hint {
+    font-family: var(--f-mono);
+    font-size: 0.74rem;
+    line-height: 1.9;
+    color: var(--dim);
+    max-width: 42ch;
+    margin: 0;
+  }
+  .slate-link {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.55rem 1.2rem;
+    border: 1px solid var(--cyan);
+    color: var(--cyan);
+    font-family: var(--f-latin);
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+  }
+  .slate-link:hover { background: var(--cyan); color: #000; }
+
+  /* ── ムービー一覧 ───────────────────────── */
+  /* ── ムービー: 三枚を円くまわすカルーセル ── */
+  .carousel {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-rows: auto auto;
+    align-content: center;
+    gap: clamp(18px, 4vh, 46px);
+    padding: clamp(16px, 4vh, 40px) clamp(16px, 5vw, 56px) clamp(96px, 24vh, 230px);
+    perspective: 1400px;
+    background: linear-gradient(100deg, rgba(4,3,9,0.95) 0%, rgba(8,6,16,0.88) 50%, rgba(4,3,8,0.68) 100%);
+  }
+
+  .track {
+    position: relative;
+    height: clamp(150px, 34vh, 360px);
+    transform-style: preserve-3d;
+    touch-action: pan-y;
+  }
+
+  .slide {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: clamp(220px, 38vw, 520px);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    transition: transform 0.55s cubic-bezier(0.22, 0.7, 0.3, 1), opacity 0.45s ease;
+  }
+  .slide.no-anim { transition: none; }
+
+  .slide[data-pos="center"] { transform: translate(-50%, -50%) scale(1);                                     z-index: 3; opacity: 1; }
+  .slide[data-pos="left"]   { transform: translate(-50%, -50%) translateX(-82%) rotateY(34deg)  scale(0.58); z-index: 2; opacity: 0.6; }
+  .slide[data-pos="right"]  { transform: translate(-50%, -50%) translateX(82%)  rotateY(-34deg) scale(0.58); z-index: 2; opacity: 0.6; }
+  .slide[data-pos="hidden"] { transform: translate(-50%, -50%) translateZ(-600px) scale(0.3);                z-index: 1; opacity: 0; pointer-events: none; }
+
+  .slide[data-pos="left"]:hover,  .slide[data-pos="right"]:hover,
+  .slide[data-pos="left"]:focus-visible, .slide[data-pos="right"]:focus-visible {
+    opacity: 0.92;
+    outline: none;
+  }
+
+  /* 左右の当たり判定。絵の外側まで広げて押しやすくする */
+  .zone {
+    position: absolute;
+    top: -14%;
+    bottom: -14%;
+    width: 46%;
+    z-index: 1;
+    display: grid;
+    align-items: center;
+    padding: 0 clamp(6px, 1.4vw, 22px);
+    border: 0;
+    background: transparent;
+    color: var(--cyan);
+    font-family: var(--f-mono);
+    font-size: clamp(1.3rem, 2.8vw, 2.1rem);
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .zone--left  { left: -5%;  justify-items: start; }
+  .zone--right { right: -5%; justify-items: end; }
+  .zone:hover, .zone:focus-visible { opacity: 0.6; outline: none; }
+
+  /* 範囲に触れたら、その側の絵も少し明るく */
+  .zone--left:hover  ~ .slide[data-pos="left"],
+  .zone--right:hover ~ .slide[data-pos="right"] { opacity: 0.92; }
+
+  /* 中央の下に敷く楕円 */
+  .slide[data-pos="center"]::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -28px;
+    transform: translateX(-50%);
+    width: 150%;
+    height: 54px;
+    background: radial-gradient(ellipse at center, rgba(60, 234, 255, 0.3), transparent 68%);
+    pointer-events: none;
+  }
+
+  .slide-thumb {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #191430;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    overflow: hidden;
+  }
+  .slide[data-pos="center"] .slide-thumb {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 1px var(--cyan), 0 18px 60px rgba(60, 234, 255, 0.22);
+  }
+  .slide-thumb img {
+    grid-area: 1 / 1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .slide-thumb.no-img img { display: none; }
+  .slide-thumb .ph {
+    grid-area: 1 / 1;
+    display: none;
+    font-family: var(--f-latin);
+    font-weight: 700;
+    font-size: 0.64rem;
+    letter-spacing: 0.14em;
+    color: var(--dim);
+  }
+  .slide-thumb.no-img .ph { display: block; }
+
+  .movie-tag {
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 0.25rem 0.6rem;
+    background: var(--cyan);
+    color: #000;
+    font-family: var(--f-latin);
+    font-weight: 700;
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+  }
+  .movie-tag[data-tag="LIVE"] { background: var(--magenta); color: #fff; }
+
+  /* 再生マークは中央だけ */
+  .slide-play {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(42px, 6vw, 62px);
+    aspect-ratio: 1;
+    display: none;
+    place-items: center;
+    border: 1px solid var(--cyan);
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.5);
+    color: var(--cyan);
+    font-size: clamp(0.85rem, 1.8vw, 1.15rem);
+    padding-left: 3px;
+  }
+  .slide[data-pos="center"] .slide-play { display: grid; }
+
+  /* 中央のタイトルだけ、下に大きく */
+  .carousel-title {
+    margin: 0;
+    justify-self: center;
+    max-width: 26ch;
+    text-align: center;
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: clamp(1.05rem, 3vw, 2rem);
+    line-height: 1.35;
+    text-wrap: balance;
+    text-shadow: 0 2px 26px rgba(0, 0, 0, 0.95);
+  }
+
+  @media (max-width: 680px) {
+    .carousel { padding-bottom: clamp(88px, 26vh, 200px); }
+    .slide { width: min(76vw, 340px); }
+    .slide[data-pos="left"]  { transform: translate(-50%, -50%) translateX(-70%) rotateY(28deg)  scale(0.5); }
+    .slide[data-pos="right"] { transform: translate(-50%, -50%) translateX(70%)  rotateY(-28deg) scale(0.5); }
+  }
+
+  /* 再生中に一覧へ戻るボタン */
+  .to-list {
+    position: absolute;
+    left: clamp(14px, 4vw, 48px);
+    bottom: clamp(14px, 4vh, 40px);
+    z-index: 3;
+    padding: 0.6rem 1.1rem;
+    border: 1px solid var(--line);
+    background: rgba(0, 0, 0, 0.72);
+    color: var(--fg);
+    font-family: var(--f-latin);
+    font-weight: 700;
+    font-size: 0.74rem;
+    letter-spacing: 0.16em;
+    cursor: pointer;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  }
+  .to-list:hover, .to-list:focus-visible { border-color: var(--cyan); outline: none; }
+
+  /* ── 2. ハーフトーン ─────────────────────── */
+  /* 三枚重ねで、左ほど粒が大きく見える */
+  .halftone,
+  .halftone::before,
+  .halftone::after {
+    position: absolute;
+    inset: 0;
+    content: '';
+    pointer-events: none;
+    background-repeat: repeat;
+    background-size: 12px 12px;
+    background-position: 0 0;
+  }
+  .halftone {
+    z-index: 3;
+    opacity: var(--halftone-opacity);
+    transition: opacity 0.4s ease;
+    background-image: radial-gradient(circle at 50% 50%, var(--dot) 0 4.1px, transparent 4.4px);
+    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(12% * var(--halftone-reach)), transparent calc(26% * var(--halftone-reach)));
+    mask-image: linear-gradient(90deg, #000 0%, #000 calc(12% * var(--halftone-reach)), transparent calc(26% * var(--halftone-reach)));
+  }
+  .halftone::before {
+    background-image: radial-gradient(circle at 50% 50%, var(--dot) 0 2.7px, transparent 3px);
+    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(26% * var(--halftone-reach)), transparent calc(45% * var(--halftone-reach)));
+    mask-image: linear-gradient(90deg, #000 0%, #000 calc(26% * var(--halftone-reach)), transparent calc(45% * var(--halftone-reach)));
+  }
+  .halftone::after {
+    background-image: radial-gradient(circle at 50% 50%, var(--dot) 0 1.5px, transparent 1.8px);
+    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(45% * var(--halftone-reach)), transparent calc(66% * var(--halftone-reach)));
+    mask-image: linear-gradient(90deg, #000 0%, #000 calc(45% * var(--halftone-reach)), transparent calc(66% * var(--halftone-reach)));
+  }
+  body:not([data-view="home"]) .halftone { opacity: 0; }
+
+  /* 右下をいつも少し暗くして、ボタンを読めるように */
+  .scrim-br {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    background: radial-gradient(ellipse 60% 55% at 100% 100%, rgba(0,0,0,0.72), transparent 70%);
+  }
+
+  /* ── 名前板 ─────────────────────────────── */
+  .namecard {
+    position: absolute;
+    z-index: 5;
+    left: clamp(20px, 7vw, 120px);
+    top: 50%;
+    transform: translateY(-50%);
+    max-width: min(460px, calc(100% - 40px));
+    padding: clamp(1.1rem, 3vw, 1.9rem) clamp(1.3rem, 4vw, 2.6rem);
+    border: 2px solid var(--line);
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(2px);
+    transition: opacity 0.4s ease, visibility 0.4s;
+  }
+  body:not([data-view="home"]) .namecard {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .namecard .kicker {
+    font-family: var(--f-mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin: 0 0 0.7rem;
+  }
+  .namecard .jp {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: clamp(2.1rem, 7vw, 3.6rem);
+    line-height: 1.1;
+    margin: 0 0 0.5rem;
+    text-wrap: balance;
+  }
+  .namecard .romaji {
+    font-family: var(--f-latin);
+    font-weight: 700;
+    font-size: clamp(0.85rem, 2.4vw, 1.1rem);
+    letter-spacing: 0.22em;
+    color: #d8d4ec;
+    margin: 0;
+  }
+
+  /* ── 3. 右下の斜めボタン ─────────────────── */
+  .dock {
+    position: absolute;
+    z-index: 6;
+    right: clamp(14px, 4vw, 56px);
+    bottom: var(--dock-lift);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+    width: min(360px, calc(100% - 28px));
+    transform: rotate(var(--dock-tilt));
+    transform-origin: 100% 100%;
+  }
+
+  .btn {
+    --shift: 0px;
+    position: relative;
+    display: block;
+    width: 100%;
+    margin-right: calc(var(--shift) * -1);
+    padding: 0;
+    border: 1px solid var(--line);
+    background-color: rgba(10, 9, 18, 0.78);
+    background-size: cover;
+    background-position: center;
+    color: var(--fg);
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+    text-decoration: none;
+    transform: skewX(var(--btn-skew)) translateX(calc(var(--shift) * -1));
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  }
+
+  .btn--1 {
+    --shift: 60px;
+    background-image:
+      linear-gradient(rgba(0,0,0,var(--btn-scrim)), rgba(0,0,0,var(--btn-scrim))),
+      var(--btn-1-image);
+  }
+  .btn--2 {
+    --shift: 30px;
+    background-image:
+      linear-gradient(rgba(0,0,0,var(--btn-scrim)), rgba(0,0,0,var(--btn-scrim))),
+      var(--btn-2-image);
+  }
+  .btn--3 {
+    --shift: 0px;
+    background-image:
+      linear-gradient(rgba(0,0,0,var(--btn-scrim)), rgba(0,0,0,var(--btn-scrim))),
+      var(--btn-3-image);
+  }
+
+  /* 中身は逆に傾けて、文字だけまっすぐ */
+  .btn-in {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.9rem 1.5rem;
+    transform: skewX(calc(var(--btn-skew) * -1));
+  }
+
+  .btn:hover,
+  .btn:focus-visible {
+    border-color: var(--cyan);
+    background-color: rgba(18, 30, 38, 0.86);
+    box-shadow: 0 0 0 1px var(--cyan), 0 0 26px rgba(60, 234, 255, 0.3);
+    transform: skewX(var(--btn-skew)) translateX(calc((var(--shift) + 12px) * -1));
+    outline: none;
+  }
+
+  .btn[aria-pressed="true"] {
+    border-color: var(--magenta);
+    background-color: rgba(44, 10, 26, 0.86);
+    box-shadow: 0 0 0 1px var(--magenta), 0 0 26px rgba(255, 61, 142, 0.3);
+  }
+  .btn[aria-pressed="true"] .btn-no { color: var(--magenta); }
+
+  .btn-no {
+    font-family: var(--f-latin);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    color: var(--cyan);
+    flex: none;
+  }
+  .btn-label {
+    font-family: var(--f-body);
+    font-weight: 700;
+    font-size: 0.95rem;
+    min-width: 0;
+  }
+  .btn-sub {
+    display: block;
+    font-family: var(--f-mono);
+    font-weight: 400;
+    font-size: 0.64rem;
+    letter-spacing: 0.1em;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+  .btn-arrow {
+    margin-left: auto;
+    font-family: var(--f-mono);
+    color: var(--magenta);
+    flex: none;
+  }
+
+  /* 最初の画面へ戻る */
+  .back {
+    position: absolute;
+    z-index: 6;
+    left: clamp(14px, 4vw, 48px);
+    top: clamp(14px, 4vh, 40px);
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.6rem 1.1rem;
+    border: 1px solid var(--line);
+    background: rgba(0, 0, 0, 0.6);
+    color: var(--fg);
+    font-family: var(--f-latin);
+    font-weight: 700;
+    font-size: 0.74rem;
+    letter-spacing: 0.16em;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s, border-color 0.2s ease;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  }
+  .back:hover, .back:focus-visible { border-color: var(--cyan); outline: none; }
+  body:not([data-view="home"]) .back { opacity: 1; visibility: visible; }
+
+  /* ── 狭い画面 ───────────────────────────── */
+  @media (max-width: 680px) {
+    :root {
+      --dock-lift: clamp(16px, 5vh, 40px);
+      --dock-tilt: -4deg;
+      --btn-skew: -9deg;
+      --halftone-reach: 1.5;
+    }
+    .btn { --shift: 0px !important; }
+    .dock { width: calc(100% - 28px); }
+    .namecard { top: 26%; transform: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn, .layer, .halftone, .namecard, .back { transition: none; }
+    .btn:hover, .btn:focus-visible {
+      transform: skewX(var(--btn-skew)) translateX(calc(var(--shift) * -1));
+    }
+  }
+</style>
+
+<div class="stage">
+  <div class="layer layer--home"></div>
+  <div class="layer layer--view" id="viewLayer"></div>
+
+  <div class="halftone" aria-hidden="true"></div>
+  <div class="scrim-br" aria-hidden="true"></div>
+
+  <div class="namecard">
+    <p class="kicker">Virtual Performer</p>
+    <p class="jp" id="nameJp">時實ソウム</p>
+    <p class="romaji" id="nameRomaji">TOKIZANE SOUMU</p>
+  </div>
+
+  <button class="back" type="button" id="backBtn">
+    <span aria-hidden="true">&lsaquo;</span> HOME
+  </button>
+
+  <nav class="dock" aria-label="メニュー">
+    <button class="btn btn--1" type="button" data-view="b1" aria-pressed="false">
+      <span class="btn-in">
+        <span class="btn-no">B1</span>
+        <span class="btn-label">プロフィール<span class="btn-sub">profile</span></span>
+        <span class="btn-arrow" aria-hidden="true">&rsaquo;</span>
+      </span>
+    </button>
+
+    <button class="btn btn--2" type="button" data-view="b2" aria-pressed="false">
+      <span class="btn-in">
+        <span class="btn-no">B2</span>
+        <span class="btn-label">ムービー<span class="btn-sub">movie</span></span>
+        <span class="btn-arrow" aria-hidden="true">&rsaquo;</span>
+      </span>
+    </button>
+
+    <button class="btn btn--3" type="button" data-view="b3" aria-pressed="false">
+      <span class="btn-in">
+        <span class="btn-no">B3</span>
+        <span class="btn-label">リンク<span class="btn-sub">links</span></span>
+        <span class="btn-arrow" aria-hidden="true">&rsaquo;</span>
+      </span>
+    </button>
+  </nav>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   設定 / 설정 — 버튼을 눌렀을 때 배경에 무엇이 나올지
+     type: 'image'   src 에 이미지 경로
+     type: 'video'   src 에 mp4/webm 경로 (자체 호스팅 영상)
+     type: 'movies'  최신 영상 목록 (아래 MOVIE 에서 설정)
+   src 가 비어 있으면 자리 표시가 나옵니다.
+   ══════════════════════════════════════════════════════════ */
+var CONFIG = {
+  b1: { title: 'プロフィール', type: 'image',  src: '' },
+  b2: { title: 'ムービー',     type: 'movies' },
+  b3: { title: 'リンク',       type: 'image',  src: '' }
+};
+
+/* ══════════════════════════════════════════════════════════
+   ムービー / 영상 목록 — 갱신 방법 두 가지
+
+   [A] 손으로 바꾸기 — list 의 url 만 새 주소로 교체하면 끝.
+       youtu.be / watch?v= / shorts 주소 아무거나 됩니다.
+       title 은 비워도 되지만, 적어두면 그대로 표시됩니다.
+
+   [B] 자동 갱신 — apiKey 만 채우면 그 뒤로는 손댈 필요 없습니다.
+       채널에 새 영상을 올리면 사이트가 알아서 최신 3개로 바꿉니다.
+       키 발급: console.cloud.google.com 에서 프로젝트 생성 →
+                "YouTube Data API v3" 사용 설정 → 사용자 인증 정보에서 API 키 생성 →
+                키 제한은 "HTTP 리퍼러"로 본인 도메인만 허용.
+       키를 못 넣거나 호출이 실패하면 자동으로 [A] 의 list 를 씁니다.
+   ══════════════════════════════════════════════════════════ */
+var MOVIE = {
+  channelId: 'UCikGDe73xa7QhyOW9jxVB1w',   /* 時實ソウム */
+  apiKey: '',                               /* [B] 를 쓰려면 여기에 */
+  cacheMinutes: 30,                         /* API 호출 아끼는 캐시 시간 */
+
+  /* 순서대로 3개. 첫 번째가 처음에 가운데로 옵니다.
+     tag 는 썸네일 왼쪽 위 배지. 비워두면 배지가 안 붙습니다. */
+  list: [
+    { tag: 'LATEST',
+      url: 'https://www.youtube.com/watch?v=ePvRph6sb2E',
+      title: '【切り抜き】ボカロの事なんも頭に入ってないVTuver' },
+    { tag: 'LIVE',
+      url: 'https://www.youtube.com/watch?v=tgX51Qi-vcU',
+      title: '【活動者凸待ち】２周年記念企画！3年目もよろしくお願いします！' },
+    { tag: 'LIVE',
+      url: 'https://www.youtube.com/watch?v=LlqoqFgF3Xs',
+      title: '【2nd anniversary】ありがとうな。３年目もよろしくな！' }
+  ]
+};
+
+(function () {
+  var body = document.body;
+  var viewLayer = document.getElementById('viewLayer');
+  var buttons = Array.prototype.slice.call(document.querySelectorAll('.btn[data-view]'));
+
+  body.setAttribute('data-view', 'home');
+
+  function slate(kind, title, hint) {
+    return '<div class="slate">' +
+      '<p class="slate-kind">' + kind + '</p>' +
+      '<p class="slate-title">' + title + '</p>' +
+      '<p class="slate-hint">' + hint + '</p>' +
+      '</div>';
+  }
+
+  function clearView() {
+    var v = viewLayer.querySelector('video');
+    if (v) { v.pause(); }
+    viewLayer.innerHTML = '';
+  }
+
+  /* ── ムービー ───────────────────────────── */
+  /* 유튜브 주소 아무 형태나 받아서 영상 ID 만 뽑아냅니다 */
+  function ytId(v) {
+    if (!v) { return ''; }
+    var m = String(v).match(/(?:youtu\.be\/|[?&]v=|\/shorts\/|\/embed\/|\/live\/)([\w-]{11})/);
+    if (m) { return m[1]; }
+    return /^[\w-]{11}$/.test(v) ? v : '';
+  }
+
+  function manualMovies() {
+    return (MOVIE.list || []).map(function (v) {
+      return { tag: v.tag || '', id: ytId(v.url || v.id), title: v.title || '' };
+    }).filter(function (v) { return v.id; }).slice(0, 3);
+  }
+
+  function cacheRead() {
+    try {
+      var r = JSON.parse(localStorage.getItem('yt-latest') || 'null');
+      if (r && r.c === MOVIE.channelId &&
+          Date.now() - r.t < (MOVIE.cacheMinutes || 30) * 60000) { return r.v; }
+    } catch (e) {}
+    return null;
+  }
+  function cacheWrite(v) {
+    try {
+      localStorage.setItem('yt-latest', JSON.stringify({ t: Date.now(), c: MOVIE.channelId, v: v }));
+    } catch (e) {}
+  }
+
+  /* apiKey 가 있으면 최신 업로드 1개 + 최근 라이브 2개를 가져오고,
+     없거나 실패하면 MOVIE.list 를 그대로 씁니다 */
+  function fetchMovies(cb) {
+    var fallback = manualMovies();
+    if (!MOVIE.apiKey || !MOVIE.channelId) { cb(fallback); return; }
+
+    var cached = cacheRead();
+    if (cached && cached.length) { cb(cached); return; }
+
+    var base = 'https://www.googleapis.com/youtube/v3/';
+    var uploads = 'UU' + MOVIE.channelId.slice(2);
+    var get = function (u) { return fetch(u).then(function (r) { return r.json(); }); };
+
+    Promise.all([
+      get(base + 'playlistItems?part=snippet&maxResults=1&playlistId=' + uploads +
+          '&key=' + MOVIE.apiKey),
+      get(base + 'search?part=snippet&type=video&eventType=completed&order=date&maxResults=2' +
+          '&channelId=' + MOVIE.channelId + '&key=' + MOVIE.apiKey)
+    ]).then(function (res) {
+      var out = [];
+      var up = ((res[0] && res[0].items) || [])[0];
+      if (up) {
+        out.push({ tag: 'LATEST', id: up.snippet.resourceId.videoId, title: up.snippet.title });
+      }
+      ((res[1] && res[1].items) || []).forEach(function (it, i) {
+        if (i > 1) { return; }
+        out.push({ tag: 'LIVE', id: it.id.videoId, title: it.snippet.title });
+      });
+      if (out.length) { cacheWrite(out); cb(out); } else { cb(fallback); }
+    })['catch'](function () { cb(fallback); });
+  }
+
+  var spin = null;   /* 캐러셀 회전 함수. 화살표 키에서 씁니다 */
+
+  function movieSlide(v, i) {
+    var btn = document.createElement('button');
+    btn.className = 'slide';
+    btn.type = 'button';
+    btn.setAttribute('data-i', String(i));
+
+    var thumb = document.createElement('span');
+    thumb.className = 'slide-thumb';
+
+    var img = document.createElement('img');
+    img.alt = '';
+    img.src = 'https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg';
+    img.addEventListener('error', function () { thumb.classList.add('no-img'); });
+
+    var ph = document.createElement('span');
+    ph.className = 'ph';
+    ph.textContent = 'NO THUMBNAIL';
+
+    thumb.appendChild(img);
+    thumb.appendChild(ph);
+
+    if (v.tag) {
+      var tag = document.createElement('span');
+      tag.className = 'movie-tag';
+      tag.setAttribute('data-tag', v.tag);
+      tag.textContent = v.tag;
+      thumb.appendChild(tag);
+    }
+
+    var play = document.createElement('span');
+    play.className = 'slide-play';
+    play.textContent = '▶';
+    thumb.appendChild(play);
+
+    btn.appendChild(thumb);
+    return btn;
+  }
+
+  function buildCarousel(track, caption, items) {
+    /* 그림 바깥까지 덮는 좌우 클릭 영역. 슬라이드보다 먼저 깔아야
+       CSS 의 ~ 선택자로 그 쪽 그림을 같이 밝힐 수 있다 */
+    var zoneL = document.createElement('button');
+    zoneL.className = 'zone zone--left';
+    zoneL.type = 'button';
+    zoneL.setAttribute('aria-label', '前の動画');
+    zoneL.textContent = '‹';
+
+    var zoneR = document.createElement('button');
+    zoneR.className = 'zone zone--right';
+    zoneR.type = 'button';
+    zoneR.setAttribute('aria-label', '次の動画');
+    zoneR.textContent = '›';
+
+    track.appendChild(zoneL);
+    track.appendChild(zoneR);
+
+    var els = items.map(function (v, i) {
+      var el = movieSlide(v, i);
+      track.appendChild(el);
+      return el;
+    });
+
+    var n = els.length;
+    /* order = [왼쪽, 가운데, 오른쪽] 자리에 놓인 영상 번호 */
+    var order = n >= 3 ? [2, 0, 1] : (n === 2 ? [null, 0, 1] : [null, 0, null]);
+
+    function apply(wrapped) {
+      ['left', 'center', 'right'].forEach(function (pos, pi) {
+        var idx = order[pi];
+        if (idx === null || idx === undefined) { return; }
+        var el = els[idx];
+        if (el === wrapped) {
+          /* 반대쪽 끝으로 넘어가는 한 장은 화면을 가로지르지 않고,
+             뒤로 빠졌다가 반대편에서 돌아 나오게 한다 */
+          el.classList.add('no-anim');
+          el.setAttribute('data-pos', 'hidden');
+          void el.offsetWidth;
+          el.classList.remove('no-anim');
+        }
+        el.setAttribute('data-pos', pos);
+        el.setAttribute('aria-current', pos === 'center' ? 'true' : 'false');
+      });
+      var c = items[order[1]];
+      caption.textContent = c ? (c.title || '') : '';
+    }
+
+    function rotate(dir) {
+      if (n < 3) { return; }
+      var wrapped;
+      if (dir > 0) {               /* 오른쪽 영상을 가운데로 */
+        wrapped = els[order[0]];
+        order = [order[1], order[2], order[0]];
+      } else {                     /* 왼쪽 영상을 가운데로 */
+        wrapped = els[order[2]];
+        order = [order[2], order[0], order[1]];
+      }
+      apply(wrapped);
+    }
+
+    var swiped = false;
+    els.forEach(function (el) {
+      el.addEventListener('click', function () {
+        if (swiped) { swiped = false; return; }
+        var pos = el.getAttribute('data-pos');
+        if (pos === 'center') { playMovie(items[Number(el.getAttribute('data-i'))]); }
+        else if (pos === 'left') { rotate(-1); }
+        else if (pos === 'right') { rotate(1); }
+      });
+    });
+
+    zoneL.addEventListener('click', function () {
+      if (swiped) { swiped = false; return; }
+      rotate(-1);
+    });
+    zoneR.addEventListener('click', function () {
+      if (swiped) { swiped = false; return; }
+      rotate(1);
+    });
+    if (n < 3) { zoneL.hidden = true; zoneR.hidden = true; }
+
+    /* 스와이프 */
+    var x0 = null;
+    track.addEventListener('pointerdown', function (e) { x0 = e.clientX; swiped = false; });
+    track.addEventListener('pointerup', function (e) {
+      if (x0 === null) { return; }
+      var dx = e.clientX - x0;
+      x0 = null;
+      if (Math.abs(dx) > 12) { swiped = true; }
+      if (Math.abs(dx) > 40) { rotate(dx < 0 ? 1 : -1); }
+    });
+    track.addEventListener('pointercancel', function () { x0 = null; });
+
+    spin = rotate;
+    apply(null);
+  }
+
+  function renderMovies() {
+    spin = null;
+    var wrap = document.createElement('div');
+    wrap.className = 'carousel';
+    var track = document.createElement('div');
+    track.className = 'track';
+    var caption = document.createElement('p');
+    caption.className = 'carousel-title';
+    wrap.appendChild(track);
+    wrap.appendChild(caption);
+    viewLayer.appendChild(wrap);
+
+    fetchMovies(function (items) {
+      if (!items.length) {
+        viewLayer.innerHTML = slate('MOVIE', 'ムービー',
+          'MOVIE.list 에 유튜브 주소를 넣으면 여기에 표시됩니다.');
+        return;
+      }
+      buildCarousel(track, caption, items.slice(0, 3));
+    });
+  }
+
+  function playMovie(v) {
+    clearView();
+    /* 埋め込みが塞がれている環境のための下敷き */
+    viewLayer.innerHTML = slate('YOUTUBE', v.title || '',
+      '이 미리보기에서는 유튜브 삽입이 차단됩니다. 직접 호스팅한 사이트에서는 여기서 바로 재생됩니다.' +
+      '<a class="slate-link" href="https://www.youtube.com/watch?v=' + v.id +
+      '" target="_blank" rel="noopener">YouTube에서 열기 &rsaquo;</a>');
+
+    var f = document.createElement('iframe');
+    f.src = 'https://www.youtube.com/embed/' + v.id + '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
+    f.allow = 'autoplay; encrypted-media; picture-in-picture';
+    f.allowFullscreen = true;
+    f.title = v.title || '';
+    viewLayer.appendChild(f);
+
+    var back = document.createElement('button');
+    back.className = 'to-list';
+    back.type = 'button';
+    back.textContent = '‹ LIST';
+    back.addEventListener('click', function () { clearView(); renderMovies(); });
+    viewLayer.appendChild(back);
+  }
+
+  function render(key) {
+    var c = CONFIG[key];
+    clearView();
+    if (!c) { return; }
+
+    if (c.type === 'image') {
+      if (!c.src) {
+        viewLayer.innerHTML = slate('IMAGE', c.title,
+          'CONFIG.' + key + '.src 에 이미지 경로를 넣으면 여기에 전체 화면으로 깔립니다.');
+        return;
+      }
+      var d = document.createElement('div');
+      d.className = 'media';
+      d.style.backgroundImage = 'url("' + c.src + '")';
+      viewLayer.appendChild(d);
+
+    } else if (c.type === 'video') {
+      if (!c.src) {
+        viewLayer.innerHTML = slate('VIDEO', c.title,
+          'CONFIG.' + key + '.src 에 mp4 경로를 넣으면 배경에서 재생됩니다.');
+        return;
+      }
+      var vid = document.createElement('video');
+      vid.src = c.src;
+      vid.autoplay = true;
+      vid.loop = true;
+      vid.playsInline = true;
+      vid.controls = true;
+      viewLayer.appendChild(vid);
+      var p = vid.play();
+      if (p && p.catch) { p.catch(function () {}); }
+
+    } else if (c.type === 'movies') {
+      renderMovies();
+    }
+  }
+
+  function setView(key) {
+    body.setAttribute('data-view', key);
+    buttons.forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.view === key));
+    });
+    if (key === 'home') { clearView(); } else { render(key); }
+  }
+
+  buttons.forEach(function (b) {
+    b.addEventListener('click', function () {
+      var key = b.dataset.view;
+      setView(body.getAttribute('data-view') === key ? 'home' : key);
+    });
+  });
+
+  document.getElementById('backBtn').addEventListener('click', function () {
+    setView('home');
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { setView('home'); return; }
+    /* 재생 중이 아닐 때만 좌우 화살표로 돌린다 */
+    if (!spin || viewLayer.querySelector('iframe')) { return; }
+    if (e.key === 'ArrowRight') { e.preventDefault(); spin(1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); spin(-1); }
+  });
+})();
+</script>
